@@ -1,4 +1,6 @@
-var async = function(funcArray, callback) {
+var async = {};
+
+async.parallel = function(funcArray, callback) {
 	var funcLength = funcArray.length,
 		result = [],
 		isErr = false;
@@ -23,24 +25,27 @@ var async = function(funcArray, callback) {
 	}
 };
 
-//test
-var fs = require('fs');
-async([
-	function(callback) {
-		//fs.readFile('data.json', 'utf8', callback);
-		setTimeout(function() {
-			callback(null, 'one');
-		}, 100);
-	},
-	function(callback) {
-		//fs.readFile('content.json', 'utf8', callback);
-		setTimeout(function() {
-			callback(null, 'two');
-		}, 200);
+async.waterfall = function(funcArray, callback) {
+	var funcLength = funcArray.length,
+		result,
+		firstDone = false;
+
+	var func = funcArray.shift();
+
+	function cb(err, data) {
+		if (err) {
+			return callback(err);
+		}
+		result = data;
+		if (funcArray.length) {
+			fn = funcArray.shift();
+			fn(result, arguments.callee);
+		} else {
+			callback(err, data);
+		}
 	}
-], function(err, content) {
-	if (err) {
-		return console.log(err);
-	}
-	console.log(content);//[data, content]	
-});
+
+	func(result, cb);
+};
+
+module.exports = exports = async;
