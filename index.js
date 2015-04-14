@@ -27,7 +27,7 @@ async.parallel = function(funcArray, callback) {
 
 async.waterfall = function(funcArray, callback) {
 	var funcLength = funcArray.length,
-		result,
+		result = null,
 		firstDone = false;
 
 	var func = funcArray.shift();
@@ -41,7 +41,7 @@ async.waterfall = function(funcArray, callback) {
 			fn = funcArray.shift();
 			fn(result, arguments.callee);
 		} else {
-			callback(err, data);
+			callback(null, data);
 		}
 	}
 
