@@ -27,25 +27,23 @@ async.parallel = function(funcArray, callback) {
 
 async.waterfall = function(funcArray, callback) {
 	var funcLength = funcArray.length,
-		result = null,
 		firstDone = false;
 
 	var func = funcArray.shift();
 
-	function cb(err, data) {
+	function cb(err, result) {
 		if (err) {
 			return callback(err);
 		}
-		result = data;
 		if (funcArray.length) {
 			fn = funcArray.shift();
 			fn(result, arguments.callee);
 		} else {
-			callback(null, data);
+			callback(null, result);
 		}
 	}
 
-	func(result, cb);
+	func(cb);
 };
 
 module.exports = exports = async;
